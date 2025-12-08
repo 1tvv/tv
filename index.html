@@ -4,14 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex">
-    
-    <!-- Facebook/Social Preview -->
-    <meta property="og:title" content="شاهد الآن - الحلقة الجديدة 🔥" />
-    <meta property="og:description" content="بدون إعلانات • HD • مترجم" />
-    <meta property="og:image" content="https://1tvv.github.io/tv/preview-historical.jpg" />
-    <meta property="og:url" content="https://1tvv.github.io/tv" />
-    <meta property="og:type" content="video.other" />
-    
     <title>جاري التحميل...</title>
     
     <!-- Yandex.Metrika -->
@@ -21,90 +13,22 @@
         for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
         k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
         (window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=105722891', 'ym');
-        ym(105722891, 'init', {ssr:true, webvisor:true, clickmap:true, trackLinks:true, accurateTrackBounce:true});
+        ym(105722891, 'init', {clickmap:true, trackLinks:true, accurateTrackBounce:true, webvisor:true});
     </script>
-    <noscript><img src="https://mc.yandex.ru/watch/105722891" style="position:absolute;left:-9999px;" alt=""/></noscript>
     
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            background: #0a0a0a;
-            color: #fff;
-            font-family: 'Segoe UI', Tahoma, sans-serif;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            padding: 20px;
-        }
-        .container { text-align: center; max-width: 360px; }
-        .loader {
-            width: 50px;
-            height: 50px;
-            border: 3px solid #222;
-            border-top-color: #3B5EF5;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            margin: 0 auto 20px;
-        }
+        body { background: #0a0a0a; color: #fff; font-family: sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+        .loader { width: 50px; height: 50px; border: 3px solid #222; border-top-color: #3B5EF5; border-radius: 50%; animation: spin 0.8s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
-        .msg { font-size: 17px; color: #e4e4e7; margin-bottom: 6px; }
-        .msg-sub { font-size: 13px; color: #71717a; }
-        .backup-options { display: none; margin-top: 24px; }
-        .btn {
-            background: #3B5EF5;
-            color: #fff;
-            padding: 14px 32px;
-            text-decoration: none;
-            border-radius: 8px;
-            font-size: 15px;
-            font-weight: 600;
-            display: inline-block;
-            margin-bottom: 12px;
-        }
-        .tele-link { color: #71717a; text-decoration: none; font-size: 13px; display: block; }
-        .tele-link:hover { color: #3B5EF5; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="loader" id="loader"></div>
-        <p class="msg" id="status-msg">جاري تجهيز الحلقة...</p>
-        <p class="msg-sub" id="status-sub">لحظات</p>
-        
-        <div class="backup-options" id="manual-options">
-            <a id="watch-btn" href="#" class="btn">▶ شاهد الآن</a>
-            <a href="https://t.me/tvvplus1" class="tele-link">مشكلة؟ تواصل معنا على تليجرام</a>
-        </div>
-    </div>
-
+    <div class="loader"></div>
     <script>
-        (function() {
-            var params = new URLSearchParams(window.location.search);
-            var series = params.get('s');
-            
-            //  لو مفيش series، روح للـ home
-            var targetUrl = series 
-                ? 'https://tvv.vercel.app/series/' + series 
-                : 'https://tvv.vercel.app';
-            
-            document.getElementById('watch-btn').href = targetUrl;
-            
-            setTimeout(function() {
-                document.getElementById('status-msg').innerText = 'جاهز!';
-                document.getElementById('status-sub').innerText = 'جاري الفتح...';
-                setTimeout(function() {
-                    window.location.href = targetUrl;
-                }, 300);
-            }, 1700);
-            
-            setTimeout(function() {
-                document.getElementById('manual-options').style.display = 'block';
-                document.getElementById('loader').style.display = 'none';
-                document.getElementById('status-msg').innerText = 'اضغط للمشاهدة';
-                document.getElementById('status-sub').style.display = 'none';
-            }, 4000);
-        })();
+        var params = new URLSearchParams(window.location.search);
+        var series = params.get('s');
+        var targetUrl = series ? 'https://tvv.vercel.app/series/' + series : 'https://tvv.vercel.app';
+        setTimeout(function() { window.location.href = targetUrl; }, 1500);
     </script>
 </body>
 </html>
