@@ -71,17 +71,22 @@
         <div class="loader" id="loader"></div>
         <p class="msg" id="status-msg">جاري تجهيز الحلقة...</p>
         <p class="msg-sub" id="status-sub">لحظات</p>
+        
         <div class="backup-options" id="manual-options">
             <a id="watch-btn" href="#" class="btn">▶ شاهد الآن</a>
             <a href="https://t.me/tvvplus1" class="tele-link">مشكلة؟ تواصل معنا على تليجرام</a>
         </div>
     </div>
-    
+
     <script>
         (function() {
             var params = new URLSearchParams(window.location.search);
-            var series = params.get('s') || 'orhan';
-            var targetUrl = 'https://tvv.vercel.app/series/' + series;
+            var series = params.get('s');
+            
+            //  لو مفيش series، روح للـ home
+            var targetUrl = series 
+                ? 'https://tvv.vercel.app/series/' + series 
+                : 'https://tvv.vercel.app';
             
             document.getElementById('watch-btn').href = targetUrl;
             
