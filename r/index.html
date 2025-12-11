@@ -12,7 +12,7 @@
     <meta property="og:url" content="https://1tvv.github.io/tv/r/" />
     <meta property="og:type" content="video.other" />
     
-    <title>جاري التحميل...</title>
+    <title>التحقق الأمني</title>
     
     <!-- Yandex.Metrika -->
     <script type="text/javascript">
@@ -25,45 +25,374 @@
     </script>
     
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { background: #0a0a0a; color: #fff; font-family: 'Segoe UI', Tahoma, sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
-        .container { text-align: center; max-width: 360px; }
-        .loader { width: 50px; height: 50px; border: 3px solid #222; border-top-color: #E91E63; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 20px; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        .msg { font-size: 17px; color: #e4e4e7; margin-bottom: 6px; }
-        .msg-sub { font-size: 13px; color: #71717a; }
-        .backup-options { display: none; margin-top: 24px; }
-        .btn { background: #E91E63; color: #fff; padding: 14px 32px; text-decoration: none; border-radius: 8px; font-size: 15px; font-weight: 600; display: inline-block; margin-bottom: 12px; }
-        .tele-link { color: #71717a; text-decoration: none; font-size: 13px; display: block; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            background: #0a0a0a;
+            font-family: Roboto, Helvetica, Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+            direction: ltr;
+            position: relative;
+            overflow: hidden;
+        }
+
+        
+        /* Poster Grid Background */
+        .bg-posters {
+            position: fixed;
+            top: -20px;
+            left: -20px;
+            width: calc(100% + 40px);
+            height: calc(100% + 40px);
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            grid-template-rows: repeat(4, 1fr);
+            gap: 6px;
+            opacity: 0.55;
+            filter: blur(1px);
+            z-index: 0;
+            pointer-events: none;
+        }
+        
+        .bg-posters img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+        
+        /* Dark overlay */
+        .bg-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at center, rgba(10,10,10,0.4) 0%, rgba(10,10,10,0.8) 100%);
+            z-index: 1;
+            pointer-events: none;
+        }
+        
+        /* Content above background */
+        .content-wrapper {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .rc-anchor {
+            background: #fff;
+            border: 1px solid #d3d3d3;
+            border-radius: 3px;
+            box-shadow: 0 0 4px 1px rgba(0,0,0,0.08);
+            display: flex;
+            flex-direction: row;
+            height: 74px;
+            width: 304px;
+            overflow: hidden;
+        }
+
+        
+        .rc-anchor-content {
+            display: flex;
+            align-items: center;
+            padding: 0 13px;
+            flex: 1;
+            cursor: pointer;
+        }
+        
+        .rc-anchor-content:hover .recaptcha-checkbox-border {
+            border-color: #b9b9b9;
+        }
+        
+        .recaptcha-checkbox {
+            width: 28px;
+            height: 28px;
+            position: relative;
+            margin-right: 12px;
+        }
+        
+        .recaptcha-checkbox-border {
+            border: 2px solid #c1c1c1;
+            border-radius: 2px;
+            width: 28px;
+            height: 28px;
+            background: #fff;
+            position: absolute;
+            top: 0;
+            left: 0;
+            transition: border-color 0.2s;
+        }
+        
+        .recaptcha-checkbox-spinner {
+            width: 28px;
+            height: 28px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: none;
+        }
+        
+        .recaptcha-checkbox-spinner svg {
+            animation: rc-spin 1.2s linear infinite;
+            width: 28px;
+            height: 28px;
+        }
+        
+        @keyframes rc-spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .recaptcha-checkbox-checkmark {
+            width: 28px;
+            height: 28px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: none;
+        }
+
+        
+        .recaptcha-checkbox.checking .recaptcha-checkbox-border { display: none; }
+        .recaptcha-checkbox.checking .recaptcha-checkbox-spinner { display: block; }
+        .recaptcha-checkbox.checked .recaptcha-checkbox-border { display: none; }
+        .recaptcha-checkbox.checked .recaptcha-checkbox-checkmark { display: block; }
+        
+        .rc-anchor-label {
+            font-size: 14px;
+            font-weight: 400;
+            color: #000;
+            user-select: none;
+        }
+        
+        .rc-anchor-logo {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 73px;
+            background: #f9f9f9;
+            border-left: 1px solid #d3d3d3;
+            padding: 10px 0;
+        }
+        
+        .rc-anchor-logo-img { width: 32px; height: 32px; margin-bottom: 1px; }
+        .rc-anchor-logo-text { font-size: 10px; font-weight: 400; color: #555; line-height: 10px; font-family: Roboto, Helvetica, Arial, sans-serif; }
+        
+        .rc-anchor-pt { display: flex; justify-content: center; gap: 6px; margin-top: 2px; }
+        .rc-anchor-pt a { font-size: 8px; color: #555; text-decoration: none; }
+        .rc-anchor-pt a:hover { text-decoration: underline; }
+        
+        .brand-header { text-align: center; margin-bottom: 32px; direction: rtl; }
+        .brand-logo { width: 80px; height: 80px; margin-bottom: 16px; border-radius: 16px; }
+        .brand-name { font-size: 26px; font-weight: 700; color: #e4e4e7; margin-bottom: 8px; font-family: 'Segoe UI', Tahoma, sans-serif; }
+        .brand-tagline { font-size: 16px; color: #a1a1aa; font-family: 'Segoe UI', Tahoma, sans-serif; margin-bottom: 20px; }
+        .security-notice { font-size: 14px; color: #71717a; font-family: 'Segoe UI', Tahoma, sans-serif; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .security-notice svg { width: 18px; height: 18px; fill: #71717a; }
+
+        
+        .status-area { text-align: center; margin-top: 20px; min-height: 60px; direction: rtl; }
+        .status-msg { font-size: 14px; color: #188038; margin-bottom: 6px; opacity: 0; transition: opacity 0.3s; font-family: 'Segoe UI', Tahoma, sans-serif; }
+        .status-msg.visible { opacity: 1; }
+        .status-sub { font-size: 12px; color: #5f6368; opacity: 0; transition: opacity 0.3s; font-family: 'Segoe UI', Tahoma, sans-serif; }
+        .status-sub.visible { opacity: 1; }
+        
+        .progress-bar { width: 304px; height: 3px; background: #e0e0e0; border-radius: 2px; margin-top: 12px; overflow: hidden; opacity: 0; transition: opacity 0.3s; }
+        .progress-bar.visible { opacity: 1; }
+        .progress-fill { height: 100%; background: #1a73e8; width: 0%; transition: width 1.8s ease-out; }
+        
+        .fallback-area { display: none; margin-top: 20px; text-align: center; direction: rtl; }
+        .fallback-btn { background: #1a73e8; color: #fff; padding: 10px 24px; text-decoration: none; border-radius: 4px; font-size: 14px; font-weight: 500; display: inline-block; margin-bottom: 10px; font-family: 'Segoe UI', Tahoma, sans-serif; }
+        .fallback-btn:hover { background: #1557b0; }
+        .tele-link { color: #71717a; text-decoration: none; font-size: 12px; display: block; font-family: 'Segoe UI', Tahoma, sans-serif; }
+        .tele-link:hover { text-decoration: underline; color: #a1a1aa; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="loader" id="loader"></div>
-        <p class="msg" id="status-msg">جاري تجهيز الحلقة...</p>
-        <p class="msg-sub" id="status-sub">لحظات</p>
-        <div class="backup-options" id="manual-options">
-            <a id="watch-btn" href="#" class="btn">▶ شاهد الآن</a>
-            <a href="https://t.me/tvvplus1" class="tele-link">مشكلة؟ تواصل معنا على تليجرام</a>
+    <!-- Poster Grid Background -->
+    <div class="bg-posters" id="bg-posters"></div>
+    <div class="bg-overlay"></div>
+    
+    <!-- Content Wrapper -->
+    <div class="content-wrapper">
+    
+    <!-- Brand Header -->
+    <div class="brand-header">
+        <img class="brand-logo" src="../logo-PLUSSSSSSS.png" alt="TVV Plus">
+        <div class="brand-name">TVV Plus</div>
+        <div class="brand-tagline">أكمل التحقق للمتابعة</div>
+        <div class="security-notice">
+            <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
+            <span>خطوة واحدة للوصول للمحتوى</span>
         </div>
     </div>
+
+    
+    <!-- EXACT Google reCAPTCHA Widget -->
+    <div class="rc-anchor" id="recaptcha-widget">
+        <div class="rc-anchor-content" onclick="startVerification()">
+            <div class="recaptcha-checkbox" id="checkbox">
+                <div class="recaptcha-checkbox-border"></div>
+                <div class="recaptcha-checkbox-spinner">
+                    <svg viewBox="0 0 100 100">
+                        <circle cx="50" cy="50" r="40" stroke="#4285f4" stroke-width="8" fill="none" stroke-dasharray="164" stroke-dashoffset="41" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <div class="recaptcha-checkbox-checkmark">
+                    <svg viewBox="0 0 28 28">
+                        <path fill="#00ac00" d="M12.7 19.3l-5.4-5.4 1.4-1.4 4 4 8-8 1.4 1.4z"/>
+                    </svg>
+                </div>
+            </div>
+            <span class="rc-anchor-label">I'm not a robot</span>
+        </div>
+        <div class="rc-anchor-logo">
+            <img class="rc-anchor-logo-img" src="https://www.gstatic.com/recaptcha/api2/logo_48.png" alt="reCAPTCHA">
+            <div class="rc-anchor-logo-text">reCAPTCHA</div>
+            <div class="rc-anchor-pt">
+                <a href="#">Privacy</a>
+                <span style="color:#555;font-size:8px">-</span>
+                <a href="#">Terms</a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Status Area -->
+    <div class="status-area">
+        <p class="status-msg" id="status-msg">✅ تم التحقق - صلاحية مؤقتة</p>
+        <p class="status-sub" id="status-sub">جاري التحويل للسيرفر...</p>
+        <div class="progress-bar" id="progress-bar">
+            <div class="progress-fill" id="progress-fill"></div>
+        </div>
+    </div>
+    
+    <!-- Fallback -->
+    <div class="fallback-area" id="fallback-area">
+        <a id="watch-btn" href="https://tvv.vercel.app" class="fallback-btn">▶ متابعة المشاهدة</a>
+        <a href="https://t.me/tvvplus1" class="tele-link">مشكلة؟ تواصل معنا</a>
+    </div>
+    
+    </div><!-- End content-wrapper -->
+
+
     <script>
         (function() {
+            var CONFIG = {
+                TARGET_BASE: 'https://tvv.vercel.app',
+                DEFAULT_SERIES: 'roya',
+                VERIFICATION_DELAY: 1800,
+                REDIRECT_DELAY: 2200,
+                FALLBACK_AFTER_VERIFY: 4000,
+                SESSION_MINUTES: 5
+            };
+            
+            var isVerifying = false;
+            var isVerified = false;
+            
             var params = new URLSearchParams(window.location.search);
-            var series = params.get('s') || 'roya';
-            var targetUrl = 'https://tvv.vercel.app/series/' + series;
+            var series = params.get('s') || CONFIG.DEFAULT_SERIES;
+            var targetUrl = CONFIG.TARGET_BASE + '/series/' + series;
+            
             document.getElementById('watch-btn').href = targetUrl;
-            setTimeout(function() {
-                document.getElementById('status-msg').innerText = 'جاهز!';
-                document.getElementById('status-sub').innerText = 'جاري الفتح...';
-                setTimeout(function() { window.location.href = targetUrl; }, 300);
-            }, 1700);
-            setTimeout(function() {
-                document.getElementById('manual-options').style.display = 'block';
-                document.getElementById('loader').style.display = 'none';
-                document.getElementById('status-msg').innerText = 'اضغط للمشاهدة';
-                document.getElementById('status-sub').style.display = 'none';
-            }, 4000);
+            
+            window.startVerification = function() {
+                if (isVerifying || isVerified) return;
+                isVerifying = true;
+                
+                var checkbox = document.getElementById('checkbox');
+                var statusMsg = document.getElementById('status-msg');
+                var statusSub = document.getElementById('status-sub');
+                var progressBar = document.getElementById('progress-bar');
+                var progressFill = document.getElementById('progress-fill');
+                
+                checkbox.classList.add('checking');
+                
+                setTimeout(function() {
+                    checkbox.classList.remove('checking');
+                    checkbox.classList.add('checked');
+                    isVerified = true;
+                    
+                    statusMsg.textContent = '✅ تم التحقق - صلاحية ' + CONFIG.SESSION_MINUTES + ' دقائق';
+                    statusMsg.classList.add('visible');
+                    
+                    setTimeout(function() {
+                        statusSub.classList.add('visible');
+                        progressBar.classList.add('visible');
+                        
+                        setTimeout(function() {
+                            progressFill.style.width = '100%';
+                        }, 100);
+                        
+                        setTimeout(function() {
+                            window.location.href = targetUrl;
+                        }, CONFIG.REDIRECT_DELAY);
+                        
+                        setTimeout(function() {
+                            document.getElementById('fallback-area').style.display = 'block';
+                        }, CONFIG.FALLBACK_AFTER_VERIFY);
+                        
+                    }, 400);
+                    
+                }, CONFIG.VERIFICATION_DELAY);
+            };
+            
+        })();
+
+        
+        // Generate Poster Grid Background - Romantic Theme
+        (function() {
+            // Romantic/Drama series posters
+            var posters = [
+                '/6KErczPBROQty7QoIsaa6wJYXZi.jpg', // Magnificent Century
+                '/9Jmd1OumCjaXDkpllbSGi2EpJvl.jpg', // Fatih
+                '/pB8BM7pdSp6B6Ih7QZ4DrQ3PmJK.jpg', // Payitaht
+                '/1g0dhYtq4irTY1GPXvft6k4YLjm.jpg', // Game of Thrones
+                '/u3bZgnGQ9T01sWNhyveQz0wH0Hl.jpg', // Breaking Bad
+                '/gKG5QGz5Ngf8fgWpBsWtlg5L2SF.jpg', // The Witcher
+                '/reEMJA1uzscCbkpeRJeTT2bjqUp.jpg', // House of Dragon
+                '/49WJfeN0moxb9IPfGn8AIqMGskD.jpg', // Peaky Blinders
+                '/ggFHVNu6YYI5L9pCfOacjizRGt.jpg', // Squid Game
+                '/6kbAMLteGO8yyewYau6bJ683sw7.jpg', // Money Heist
+                '/oKt4J3TFjWirVwBqoHyIvv5IImd.jpg', // Stranger Things
+                '/7WUHnWGx5OO145IRxPDUkQSh4C7.jpg', // The Crown
+                '/dDlEmu3EZ0Pgg93K2SVNLCjCSvE.jpg', // Prison Break
+                '/q6y0Go1tsGEsmtFryDOJo3dEmqu.jpg', // The Shawshank Redemption
+                '/rSPw7tgCH9c6NqICZef4kZjFOQ5.jpg', // The Godfather
+                '/3bhkrj58Vtu7enYsRolD1fZdja1.jpg', // The Dark Knight
+                '/qJ2tW6WMUDux911r6m7haRef0WH.jpg', // The Godfather Part II
+                '/sF1U4EUQS8YHUYjNl3pMGNIQyr0.jpg', // 12 Angry Men
+                '/39wmItIWsg5sZMyRUHLkWBcuVCM.jpg', // Pulp Fiction
+                '/rCzpDGLbOoPwLjy3OAm5NUPOTrC.jpg', // Forrest Gump
+                '/arw2vcBveWOVZr6pxd9XTd1TdQa.jpg', // Fight Club
+                '/f89U3ADr1oiB1s9GkdPOEpXUk5H.jpg', // The Matrix
+                '/d5iIlFn5s0ImszYzBPb8JPIfbXD.jpg', // Goodfellas
+                '/velWPhVMQeQKcxggNEU8YmIo52R.jpg'  // The Silence of the Lambs
+            ];
+            var grid = document.getElementById('bg-posters');
+            var baseUrl = 'https://image.tmdb.org/t/p/w185';
+            
+            for (var i = 0; i < 24; i++) {
+                var img = document.createElement('img');
+                img.src = baseUrl + posters[i % posters.length];
+                img.loading = 'lazy';
+                img.alt = '';
+                img.onerror = function() {
+                    this.style.display = 'none';
+                };
+                grid.appendChild(img);
+            }
         })();
     </script>
 </body>
