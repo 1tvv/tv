@@ -1,0 +1,24 @@
+{
+  "songs": [
+    {
+      "id": "ana-geet",
+      "name": "انا جيت وانت مجتش",
+      "file": "ana-geet.mp3"
+    },
+    {
+      "id": "law-shedt",
+      "name": "لو شديت يوم عليكم",
+      "file": "law-shedt.mp3"
+    },
+    {
+      "id": "ya-bente-1",
+      "name": "يا بنتي باين عليكي 1",
+      "file": "ya-bente-1.mp3"
+    },
+    {
+      "id": "ya-bente-2",
+      "name": "يا بنتي باين عليكي 2",
+      "file": "ya-bente-2.mp3"
+    }
+  ]
+}

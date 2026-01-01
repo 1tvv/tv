@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex">
+    <meta property="og:title" content="🎵 مكتبة الأغاني - TVV Plus" />
+    <meta property="og:description" content="حمّل أغانيك المفضلة بجودة عالية" />
+    <title>مكتبة الأغاني</title>
+    <style>
+        *{box-sizing:border-box;margin:0;padding:0}
+        html{font-size:16px;-webkit-text-size-adjust:100%}
+        body{font-family:'Segoe UI',Tahoma,sans-serif;min-height:100vh;background:#0a0a0a;color:#fff;-webkit-tap-highlight-color:transparent}
+        .bg{position:fixed;inset:0;z-index:0;background-size:cover;background-position:center;filter:brightness(0.3)}
+        .bg-overlay{position:fixed;inset:0;z-index:1;background:linear-gradient(180deg,rgba(0,0,0,0.5) 0%,rgba(0,0,0,0.95) 100%)}
+        .container{position:relative;z-index:2;max-width:500px;margin:0 auto;padding:20px 16px;min-height:100vh}
+        .header{text-align:center;padding:24px 0 32px}
+        .logo{font-size:32px;margin-bottom:8px}
+        .title{font-size:22px;font-weight:700;margin-bottom:4px}
+        .subtitle{font-size:13px;color:#888}
+        .songs-list{display:flex;flex-direction:column;gap:12px}
+        .song-card{background:rgba(25,25,25,0.9);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:14px}
+        .song-header{display:flex;align-items:center;gap:12px}
+        .song-cover{width:56px;height:56px;border-radius:8px;background:#252525;overflow:hidden;flex-shrink:0}
+        .song-cover img{width:100%;height:100%;object-fit:cover}
+        .song-info{flex:1;min-width:0}
+        .song-name{font-size:15px;font-weight:600;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .song-meta{font-size:12px;color:#888;display:flex;align-items:center;gap:8px}
+        .song-badge{background:#22c55e;color:#fff;font-size:9px;padding:2px 6px;border-radius:10px;font-weight:600}
+        .btn-download{width:100%;margin-top:12px;background:linear-gradient(135deg,#22c55e 0%,#16a34a 100%);border:none;border-radius:8px;padding:12px;color:#fff;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all 0.2s}
+        .btn-download:active{transform:scale(0.98)}
+        .btn-download svg{width:18px;height:18px;stroke:#fff;fill:none}
+        .locker-modal{display:none;position:fixed;inset:0;z-index:100;background:rgba(0,0,0,0.95);align-items:center;justify-content:center;padding:16px}
+        .locker-modal.active{display:flex}
+        .locker-content{background:#141414;border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:24px 20px;width:100%;max-width:380px;max-height:90vh;overflow-y:auto}
+        .locker-header{text-align:center;margin-bottom:20px}
+        .locker-icon{font-size:48px;margin-bottom:12px}
+        .locker-title{font-size:18px;font-weight:600;margin-bottom:6px}
+        .locker-desc{font-size:13px;color:#888;line-height:1.5}
+        .locker-song{background:rgba(59,94,245,0.1);border:1px solid rgba(59,94,245,0.2);border-radius:10px;padding:12px;margin-bottom:20px;display:flex;align-items:center;gap:10px}
+        .locker-song-cover{width:40px;height:40px;border-radius:6px;overflow:hidden}
+        .locker-song-cover img{width:100%;height:100%;object-fit:cover}
+        .locker-song-name{font-size:14px;font-weight:500}
+        .servers-section{margin-bottom:16px}
+        .servers-title{font-size:12px;color:#888;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+        .server-btn{width:100%;background:rgba(30,30,30,0.9);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:12px;color:#fff;text-decoration:none;font-size:13px;display:flex;align-items:center;gap:10px;margin-bottom:8px;transition:all 0.2s}
+        .server-btn:active{background:rgba(50,50,50,0.9);transform:scale(0.98)}
+        .server-icon{width:32px;height:32px;background:rgba(40,40,40,0.8);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:16px}
+        .server-info{flex:1;text-align:right}
+        .server-name{font-weight:600;margin-bottom:2px}
+        .server-speed{font-size:11px;color:#22c55e}
+        .locker-status{padding:10px 12px;border-radius:8px;font-size:12px;display:none;align-items:center;gap:8px;margin-top:12px}
+        .locker-status.checking{display:flex;background:rgba(30,58,95,0.8);color:#60a5fa;border:1px solid rgba(37,99,235,0.5)}
+        .locker-status.success{display:flex;background:rgba(20,83,45,0.8);color:#4ade80;border:1px solid rgba(34,197,94,0.5)}
+        .spinner{width:14px;height:14px;border:2px solid currentColor;border-top-color:transparent;border-radius:50%;animation:spin 0.8s linear infinite}
+        @keyframes spin{to{transform:rotate(360deg)}}
+        .locker-close{position:absolute;top:16px;left:16px;background:rgba(255,255,255,0.1);border:none;color:#fff;width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:18px}
+        .footer{text-align:center;padding:32px 0 16px;font-size:12px;color:#555}
+    </style>
+</head>
+<body>
+    <div class="bg" id="bg"></div>
+    <div class="bg-overlay"></div>
+    
+    <div class="container">
+        <div class="header">
+            <div class="logo">🎵</div>
+            <h1 class="title">مكتبة الأغاني</h1>
+            <p class="subtitle">حمّل أغانيك المفضلة بجودة 320Kbps</p>
+        </div>
+        
+        <div class="songs-list" id="songs-list">
+            <div style="text-align:center;color:#888;padding:40px">جاري تحميل الأغاني...</div>
+        </div>
+        
+        <div class="footer">TVV Plus Music © 2025</div>
+    </div>
+    
+    <div class="locker-modal" id="locker-modal">
+        <button class="locker-close" onclick="closeLocker()">✕</button>
+        <div class="locker-content">
+            <div class="locker-header">
+                <div class="locker-icon">📥</div>
+                <h2 class="locker-title">تحميل مجاني</h2>
+                <p class="locker-desc">أكمل خطوة بسيطة لفتح رابط التحميل المباشر بأعلى جودة</p>
+            </div>
+            <div class="locker-song" id="locker-song">
+                <div class="locker-song-cover"><img id="locker-cover" src="" alt=""></div>
+                <div class="locker-song-name" id="locker-name"></div>
+            </div>
+            <div class="servers-section">
+                <div class="servers-title"><span>⚡</span><span>اختر سيرفر التحميل</span></div>
+                <div id="locker-offers"><div class="server-btn" style="justify-content:center;color:#888">جاري التحميل...</div></div>
+            </div>
+            <div class="locker-status" id="locker-status"></div>
+        </div>
+    </div>
+
+    <script>
+    (function(){
+        var _0x=['aHR0cHM6Ly9kMnhvaHFtZHlsMmNqMy5jbG91ZGZyb250Lm5ldC9wdWJsaWMvb2ZmZXJzL2ZlZWQucGhw','aHR0cHM6Ly9kMXkzeTA5c2F2NDdmNS5jbG91ZGZyb250Lm5ldC9wdWJsaWMvZXh0ZXJuYWwvY2hlY2syLnBocA=='];
+        var _d=function(s){return atob(s);};
+        var _k={u:'MTk3Nzc2',a:'MWFkYzM1N2JhMjJmMzA3MWMzYWI0NDA5MTM3MGY0MGU='};
+        var _c={u:_d(_k.u),a:_d(_k.a),i:15000,o:_d(_0x[0]),c:_d(_0x[1])};
+        
+        var songs=[],lid=null,ci=null;
+        var sn=['سيرفر مصر','سيرفر الخليج','سيرفر أوروبا','سيرفر آسيا','سيرفر أمريكا'];
+        var si=['🇪🇬','🇸🇦','🇩🇪','🇯🇵','🇺🇸'];
+        var ss=['سريع جداً','سريع','متوسط','سريع','متوسط'];
+        
+        document.getElementById('bg').style.backgroundImage='url(https://image.pollinations.ai/prompt/music%20concert%20neon%20lights?width=800&height=600&nologo=true)';
+        
+        fetch('songs.json').then(r=>r.json()).then(d=>{songs=d.songs;render();}).catch(()=>{document.getElementById('songs-list').innerHTML='<div style="text-align:center;color:#f66;padding:40px">خطأ في تحميل الأغاني</div>';});
+        
+        function render(){
+            var h='';
+            songs.forEach(s=>{
+                h+='<div class="song-card">';
+                h+='<div class="song-header">';
+                h+='<div class="song-cover"><img src="https://picsum.photos/seed/'+s.id+'/120/120" alt=""></div>';
+                h+='<div class="song-info"><div class="song-name">'+s.name+'</div><div class="song-meta"><span class="song-badge">MP3</span><span>320 Kbps</span></div></div>';
+                h+='</div>';
+                h+='<button class="btn-download" onclick="ol(\''+s.id+'\')"><svg viewBox="0 0 24 24" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg><span>تحميل مجاني</span></button>';
+                h+='</div>';
+            });
+            document.getElementById('songs-list').innerHTML=h;
+        }
+        
+        window.ol=function(id){
+            var s=songs.find(x=>x.id===id);if(!s)return;lid=id;
+            document.getElementById('locker-cover').src='https://picsum.photos/seed/'+id+'/80/80';
+            document.getElementById('locker-name').textContent=s.name;
+            document.getElementById('locker-modal').classList.add('active');
+            document.getElementById('locker-status').className='locker-status';
+            lo();sc();
+        };
+        
+        window.closeLocker=function(){document.getElementById('locker-modal').classList.remove('active');if(ci){clearInterval(ci);ci=null;}};
+        
+        function lo(){
+            var url=_c.o+'?user_id='+_c.u+'&api_key='+_c.a+'&s1='+(lid||'m')+'&callback=ho';
+            var s=document.createElement('script');s.src=url;document.body.appendChild(s);
+        }
+        
+        window.ho=function(o){
+            var l=document.getElementById('locker-offers');
+            if(!o||!o.length){l.innerHTML='<div class="server-btn" style="justify-content:center;color:#888">لا توجد سيرفرات متاحة</div>';return;}
+            var h='';for(var i=0;i<Math.min(o.length,5);i++){h+='<a href="'+o[i].url+'" target="_blank" class="server-btn" onclick="osc()"><div class="server-icon">'+si[i]+'</div><div class="server-info"><div class="server-name">'+sn[i]+'</div><div class="server-speed">⚡ '+ss[i]+'</div></div><span style="color:#666">←</span></a>';}
+            l.innerHTML=h;
+        };
+        
+        window.osc=function(){document.getElementById('locker-status').className='locker-status checking';document.getElementById('locker-status').innerHTML='<div class="spinner"></div><span>جاري التحقق من إكمال التحميل...</span>';};
+        
+        function sc(){if(ci)clearInterval(ci);ci=setInterval(cl,_c.i);}
+        
+        function cl(){var url=_c.c+'?testing=0&callback=hlc';var s=document.createElement('script');s.src=url;document.body.appendChild(s);}
+        
+        window.hlc=function(l){
+            if(l&&l.length>0){
+                clearInterval(ci);
+                document.getElementById('locker-status').className='locker-status success';
+                document.getElementById('locker-status').innerHTML='<span>✅</span><span>تم! جاري بدء التحميل...</span>';
+                setTimeout(function(){var s=songs.find(x=>x.id===lid);if(s){var a=document.createElement('a');a.href='audio/'+s.file;a.download=s.name+'.mp3';a.click();}setTimeout(closeLocker,1500);},1000);
+            }
+        };
+    })();
+    </script>
+</body>
+</html>
